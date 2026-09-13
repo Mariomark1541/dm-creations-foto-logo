@@ -53,21 +53,38 @@
 
     <section class="panel facebook-groups" aria-labelledby="groups-title">
       <div class="step"><span>4</span><div><h2 id="groups-title">Facebook-groepen</h2><p>Sla je vaste groepen één keer op en werk ze daarna snel af.</p></div></div>
+
+      <div class="facebook-setup">
+        <a id="open-facebook-groups" class="facebook-button facebook-overview" href="https://www.facebook.com/groups/" target="_blank" rel="noopener">ⓕ Mijn Facebook-groepen openen</a>
+        <p>Open een groep in Facebook, kies <strong>Delen → Link kopiëren</strong> en ga terug naar deze app. Met de knop hieronder voeg je die link meteen toe.</p>
+        <button id="paste-group" class="secondary-button paste-group" type="button">📋 Gekopieerde groepslink toevoegen</button>
+        <div id="paste-status" class="import-status" aria-live="polite"></div>
+      </div>
+
       <label class="field-label" for="post-text">Berichttekst</label>
       <textarea id="post-text" rows="4" placeholder="Bijvoorbeeld: Nieuwe handgemaakte 3D-kaart van DM-Creations ✨"></textarea>
       <div class="group-tools">
         <button id="copy-post-text" class="secondary-button" type="button">Kopieer tekst</button>
         <button id="reset-groups" class="secondary-button" type="button">Alles opnieuw</button>
       </div>
+
+      <details class="quick-import">
+        <summary>Meerdere groepen snel toevoegen</summary>
+        <p>Plak één Facebook-groepslink per regel. Je mag ook <strong>Groepsnaam | link</strong> gebruiken.</p>
+        <textarea id="group-import" rows="5" placeholder="https://www.facebook.com/groups/123456789/&#10;Kaartenhoekje | https://www.facebook.com/groups/kaartenhoekje/"></textarea>
+        <button id="import-groups" class="facebook-button import-button" type="button">Links importeren</button>
+        <div id="group-import-status" class="import-status" aria-live="polite"></div>
+      </details>
+
       <form id="group-form" class="group-form">
-        <input id="group-name" type="text" placeholder="Naam van de Facebook-groep" required>
+        <input id="group-name" type="text" placeholder="Naam (optioneel, wordt zo mogelijk automatisch ingevuld)">
         <input id="group-url" type="url" placeholder="https://www.facebook.com/groups/..." required>
         <button class="facebook-button" type="submit">Groep toevoegen</button>
       </form>
       <div class="group-progress"><strong id="group-progress-text">0 van 0 geplaatst</strong><div><span id="group-progress-bar"></span></div></div>
       <div id="group-empty" class="group-empty">Nog geen Facebook-groepen opgeslagen.</div>
       <div id="group-list" class="group-list"></div>
-      <p class="groups-note">Meta laat externe apps niet automatisch in Facebook-groepen plaatsen. Met deze lijst open je elke groep direct en houd je bij waar je al hebt geplaatst.</p>
+      <p class="groups-note">Meta laat externe apps niet automatisch in Facebook-groepen plaatsen. Deze lijst opent elke groep direct en houdt bij waar je al hebt geplaatst.</p>
     </section>
   </main>
 
