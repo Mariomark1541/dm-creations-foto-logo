@@ -49,6 +49,25 @@
       <div id="empty-state" class="empty-state"><div class="photo-glyph">▧</div><strong>Nog geen foto’s gekozen</strong><span>JPEG, PNG, WebP en waar ondersteund HEIC</span></div>
       <div id="preview-list" class="preview-list" aria-live="polite"></div>
     </section>
+
+    <section class="panel facebook-groups" aria-labelledby="groups-title">
+      <div class="step"><span>4</span><div><h2 id="groups-title">Facebook-groepen</h2><p>Sla je vaste groepen één keer op en werk ze daarna snel af.</p></div></div>
+      <label class="field-label" for="post-text">Berichttekst</label>
+      <textarea id="post-text" rows="4" placeholder="Bijvoorbeeld: Nieuwe handgemaakte 3D-kaart van DM-Creations ✨"></textarea>
+      <div class="group-tools">
+        <button id="copy-post-text" class="secondary-button" type="button">Kopieer tekst</button>
+        <button id="reset-groups" class="secondary-button" type="button">Alles opnieuw</button>
+      </div>
+      <form id="group-form" class="group-form">
+        <input id="group-name" type="text" placeholder="Naam van de Facebook-groep" required>
+        <input id="group-url" type="url" placeholder="https://www.facebook.com/groups/..." required>
+        <button class="facebook-button" type="submit">Groep toevoegen</button>
+      </form>
+      <div class="group-progress"><strong id="group-progress-text">0 van 0 geplaatst</strong><div><span id="group-progress-bar"></span></div></div>
+      <div id="group-empty" class="group-empty">Nog geen Facebook-groepen opgeslagen.</div>
+      <div id="group-list" class="group-list"></div>
+      <p class="groups-note">Meta laat externe apps niet automatisch in Facebook-groepen plaatsen. Met deze lijst open je elke groep direct en houd je bij waar je al hebt geplaatst.</p>
+    </section>
   </main>
 
   <div class="action-dock">
