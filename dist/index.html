@@ -13,6 +13,7 @@
   <link rel="icon" type="image/png" href="./assets/icons/icon-192.png">
   <link rel="stylesheet" href="./styles.css">
   <link rel="stylesheet" href="./groups.css">
+  <link rel="stylesheet" href="./price-per-photo.css">
   <title>DM-Creations Foto Logo</title>
 </head>
 <body data-active-tab="edit">
@@ -52,8 +53,9 @@
           <label class="switch"><input id="price-enabled" type="checkbox"><span></span></label>
         </div>
         <div id="price-options" hidden>
-          <label class="field-label" for="price-value">Prijs</label>
-          <div class="price-input-wrap"><span>€</span><input id="price-value" inputmode="decimal" autocomplete="off" value="4,50" aria-label="Prijs"></div>
+          <label class="field-label" for="price-value">Standaardprijs</label>
+          <div class="price-input-wrap"><span>€</span><input id="price-value" inputmode="decimal" autocomplete="off" value="4,50" aria-label="Standaardprijs"></div>
+          <p class="settings-note">Bij meerdere foto’s kun je onder ieder voorbeeld een andere prijs invullen.</p>
 
           <fieldset><legend>Stijl</legend><div class="price-styles" id="price-styles">
             <label><input type="radio" name="price-style" value="price"><span><b>€ 4,50</b><small>Alleen prijs</small></span></label>
@@ -169,6 +171,10 @@
   <template id="preview-template"><article class="preview-card">
     <div class="preview-frame"><canvas></canvas><div class="loading">Voorbeeld maken…</div></div>
     <div class="file-info"><div><strong class="file-name"></strong><span class="file-meta"></span></div><button class="remove" aria-label="Foto verwijderen">×</button></div>
+    <div class="item-price" hidden>
+      <label>Prijs voor deze foto</label>
+      <div class="price-input-wrap"><span>€</span><input class="item-price-input" inputmode="decimal" autocomplete="off" aria-label="Prijs voor deze foto"></div>
+    </div>
     <p class="item-error" hidden></p>
     <div class="item-actions" hidden><button class="share-one secondary-button">Delen</button><button class="save-one secondary-button">Bewaar in Foto’s</button></div>
   </article></template>
