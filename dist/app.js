@@ -48,11 +48,30 @@ function updateFacebookPhotoStatus(detail={selected:items.length,processed:items
   facebookPhotoStatus.textContent=`${detail.selected} foto${detail.selected===1?'':'’s'} geselecteerd${detail.processed?` · ${detail.processed} verwerkt`:''}.`;
   facebookShareBtn.disabled=false;
 }
+function invalidateItem(item){
+  item.output=null;
+  item.card.querySelector('.item-actions').hidden=true;
+}
 function changed(){
-  for(const item of items){item.output=null;item.card.querySelector('.item-actions').hidden=true}
+  for(const item of items)invalidateItem(item);
   shareBtn.disabled=saveBtn.disabled=true;
   statusEl.textContent=items.length?'Voorbeelden bijgewerkt. Tik op Alles verwerken voor delen of bewaren.':'';
   clearTimeout(renderTimer);renderTimer=setTimeout(renderAllPreviews,90);emitFilesChanged();
+}
+function changedItem(item){
+  invalidateItem(item);
+  shareBtn.disabled=saveBtn.disabled=true;
+  statusEl.textContent='Prijs voor deze foto bijgewerkt. Tik op Alles verwerken voor delen of bewaren.';
+  clearTimeout(item.renderTimer);
+  item.renderTimer=setTimeout(()=>renderPreview(item),90);
+  emitFilesChanged();
+}
+function refreshPriceInputs(){
+  for(const item of items){
+    const row=item.card.querySelector('.item-price'), field=item.card.querySelector('.item-price-input');
+    row.hidden=!priceSettings.enabled;
+    if(field&&field.value!==item.priceValue)field.value=item.priceValue;
+  }
 }
 
 for(const key of ['size','opacity','margin']){
@@ -63,9 +82,21 @@ $('#positions').addEventListener('change',e=>{if(e.target.name==='position'){set
 priceEnabled.addEventListener('change',()=>{
   priceSettings.enabled=priceEnabled.checked;
   priceOptions.hidden=!priceSettings.enabled;
+  refreshPriceInputs();
   changed();
 });
-priceValue.addEventListener('input',()=>{priceSettings.value=priceValue.value;savePriceSettings();changed()});
+priceValue.addEventListener('input',()=>{
+  priceSettings.value=priceValue.value;
+  savePriceSettings();
+  for(const item of items){
+    if(!item.priceCustom){
+      item.priceValue=priceSettings.value;
+      const field=item.card.querySelector('.item-price-input');
+      if(field)field.value=item.priceValue;
+    }
+  }
+  changed();
+});
 $('#price-styles').addEventListener('change',e=>{if(e.target.name==='price-style'){priceSettings.style=e.target.value;savePriceSettings();changed()}});
 $('#price-positions').addEventListener('change',e=>{if(e.target.name==='price-position'){priceSettings.position=e.target.value;savePriceSettings();changed()}});
 priceSize.addEventListener('change',()=>{priceSettings.size=priceSize.value;savePriceSettings();changed()});
@@ -87,8 +118,8 @@ function coordinates(w,h,lw,lh){
 function roundRect(ctx,x,y,w,h,r){
   const rr=Math.min(r,w/2,h/2);ctx.beginPath();ctx.moveTo(x+rr,y);ctx.arcTo(x+w,y,x+w,y+h,rr);ctx.arcTo(x+w,y+h,x,y+h,rr);ctx.arcTo(x,y+h,x,y,rr);ctx.arcTo(x,y,x+w,y,rr);ctx.closePath();
 }
-function priceText(){
-  let raw=String(priceSettings.value||'').trim().replace(/€/g,'').replace(/\s/g,'').replace('.',',');
+function priceText(value=priceSettings.value){
+  let raw=String(value||'').trim().replace(/€/g,'').replace(/\s/g,'').replace('.',',');
   if(!raw)raw='0,00';
   if(/^\d+$/.test(raw))raw+=',00';
   else if(/^\d+,\d$/.test(raw))raw+='0';
@@ -98,11 +129,11 @@ function rectsOverlap(a,b){return a.x<b.x+b.w&&a.x+a.w>b.x&&a.y<b.y+b.h&&a.y+a.h
 function cornerPosition(position,w,h,lw,lh,m){
   switch(position){case'top-left':return[m,m];case'top-right':return[w-lw-m,m];case'bottom-right':return[w-lw-m,h-lh-m];default:return[m,h-lh-m]}
 }
-function drawPriceLabel(ctx,w,h,watermarkRect){
+function drawPriceLabel(ctx,w,h,watermarkRect,itemPrice){
   if(!priceSettings.enabled)return;
   const minSide=Math.min(w,h), scale={small:.82,normal:1,large:1.2}[priceSettings.size]||1;
   const fs=Math.max(18,minSide*.032*scale), padX=fs*.75, padY=fs*.48, gap=fs*.38;
-  const price=priceText();
+  const price=priceText(itemPrice);
   let title='',logoSize=0;
   ctx.save();ctx.textBaseline='middle';
   if(priceSettings.style==='available')title='♥ BESCHIKBAAR';
@@ -148,45 +179,54 @@ function drawPriceLabel(ctx,w,h,watermarkRect){
   }
   ctx.restore();
 }
-function draw(target,source,maxSide=0){
+function draw(target,source,maxSide=0,item=null){
   let w=source.width||source.naturalWidth,h=source.height||source.naturalHeight;
   if(maxSide&&Math.max(w,h)>maxSide){const scale=maxSide/Math.max(w,h);w=Math.round(w*scale);h=Math.round(h*scale)}
   target.width=w;target.height=h;
   const ctx=target.getContext('2d',{alpha:false});ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality='high';ctx.drawImage(source,0,0,w,h);
   const lw=w*settings.size/100,lh=lw*(logo.naturalHeight/logo.naturalWidth),[x,y]=coordinates(w,h,lw,lh);
   ctx.globalAlpha=settings.opacity/100;ctx.drawImage(logo,x,y,lw,lh);ctx.globalAlpha=1;
-  drawPriceLabel(ctx,w,h,{x,y,w:lw,h:lh});
+  drawPriceLabel(ctx,w,h,{x,y,w:lw,h:lh},item?.priceValue??priceSettings.value);
 }
 async function renderPreview(item){
   const loading=item.card.querySelector('.loading'),err=item.card.querySelector('.item-error');loading.hidden=false;err.hidden=true;
-  try{await Promise.all([logoReady,brandLogoReady]);if(!item.bitmap)item.bitmap=await loadBitmap(item.file);draw(item.canvas,item.bitmap,1400);item.card.querySelector('.file-meta').textContent=`${item.bitmap.width} × ${item.bitmap.height} · ${friendlyBytes(item.file.size)}`}
+  try{await Promise.all([logoReady,brandLogoReady]);if(!item.bitmap)item.bitmap=await loadBitmap(item.file);draw(item.canvas,item.bitmap,1400,item);item.card.querySelector('.file-meta').textContent=`${item.bitmap.width} × ${item.bitmap.height} · ${friendlyBytes(item.file.size)}`}
   catch(e){err.textContent=e.message;err.hidden=false}finally{loading.hidden=true}
 }
 async function renderAllPreviews(){await Promise.allSettled([logoReady,brandLogoReady]);await Promise.all(items.map(renderPreview))}
 
 input.addEventListener('change',async()=>{
   for(const file of input.files){
-    const t=$('#preview-template').content.cloneNode(true),card=t.querySelector('.preview-card'),item={file,card,canvas:t.querySelector('canvas'),bitmap:null,output:null};
+    const t=$('#preview-template').content.cloneNode(true),card=t.querySelector('.preview-card');
+    const item={file,card,canvas:t.querySelector('canvas'),bitmap:null,output:null,priceValue:priceSettings.value,priceCustom:false,renderTimer:null};
     card.querySelector('.file-name').textContent=file.name;
     card.querySelector('.remove').addEventListener('click',()=>removeItem(item));
     card.querySelector('.share-one').addEventListener('click',()=>shareFiles([item]));
     card.querySelector('.save-one').addEventListener('click',()=>saveToPhotos([item]));
+    const itemPrice=card.querySelector('.item-price'),itemPriceInput=card.querySelector('.item-price-input');
+    itemPrice.hidden=!priceSettings.enabled;
+    itemPriceInput.value=item.priceValue;
+    itemPriceInput.addEventListener('input',()=>{
+      item.priceValue=itemPriceInput.value;
+      item.priceCustom=true;
+      changedItem(item);
+    });
     list.append(t);items.push(item);
   }
   input.value='';refresh();await renderAllPreviews();
 });
-function removeItem(item){if(item.bitmap?.close)item.bitmap.close();items=items.filter(x=>x!==item);item.card.remove();refresh()}
+function removeItem(item){if(item.bitmap?.close)item.bitmap.close();clearTimeout(item.renderTimer);items=items.filter(x=>x!==item);item.card.remove();refresh()}
 function refresh(){
   empty.hidden=items.length>0;processBtn.disabled=!items.length;
   $('#preview-help').textContent=items.length?`${items.length} foto${items.length===1?'':'’s'} klaar voor verwerking.`:'Kies foto’s om het resultaat vooraf te bekijken.';
   if(!items.length){shareBtn.disabled=saveBtn.disabled=true;statusEl.textContent=''}
-  emitFilesChanged();
+  refreshPriceInputs();emitFilesChanged();
 }
 function outputType(file){return file.type==='image/png'?'image/png':file.type==='image/webp'?'image/webp':'image/jpeg'}
 function extension(type){return type==='image/png'?'png':type==='image/webp'?'webp':'jpg'}
 async function processItem(item){
   await Promise.all([logoReady,brandLogoReady]);if(!item.bitmap)item.bitmap=await loadBitmap(item.file);
-  const canvas=document.createElement('canvas');draw(canvas,item.bitmap);
+  const canvas=document.createElement('canvas');draw(canvas,item.bitmap,0,item);
   const type=outputType(item.file),blob=await new Promise((resolve,reject)=>canvas.toBlob(b=>b?resolve(b):reject(new Error('Verwerken mislukt.')),type,type==='image/jpeg'?0.95:undefined));
   const base=item.file.name.replace(/\.[^.]+$/,'');item.output=new File([blob],`${base}-DM-Creations.${extension(type)}`,{type,lastModified:Date.now()});
   item.card.querySelector('.item-actions').hidden=false;return item.output;
