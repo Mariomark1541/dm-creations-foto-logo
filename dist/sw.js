@@ -1,5 +1,5 @@
-const CACHE='dm-creations-v9';
-const ASSETS=['./','./index.html','./styles.css','./groups.css','./groups.js','./app.js','./manifest.webmanifest','./assets/dm-creations-logo.png','./assets/dm-creations-watermark.b64','./assets/icons/icon-180.png','./assets/icons/icon-192.png','./assets/icons/icon-512.png'];
+const CACHE='dm-creations-v10';
+const ASSETS=['./','./index.html','./styles.css','./groups.css','./price-per-photo.css','./groups.js','./app.js','./manifest.webmanifest','./assets/dm-creations-logo.png','./assets/dm-creations-watermark.b64','./assets/icons/icon-180.png','./assets/icons/icon-192.png','./assets/icons/icon-512.png'];
 
 self.addEventListener('install',event=>{
   event.waitUntil(
@@ -15,8 +15,6 @@ self.addEventListener('activate',event=>{
     await Promise.all(keys.filter(key=>key!==CACHE).map(key=>caches.delete(key)));
     await self.clients.claim();
 
-    // Herlaad geopende PWA-vensters één keer zodra een nieuwe service worker actief is.
-    // Zo hoeft de gebruiker niet meer handmatig met ?v=... de cache te omzeilen.
     const clients=await self.clients.matchAll({type:'window',includeUncontrolled:true});
     await Promise.all(clients.map(client=>client.navigate(client.url).catch(()=>{})));
   })());
@@ -29,7 +27,6 @@ self.addEventListener('fetch',event=>{
   const url=new URL(request.url);
   if(url.origin!==self.location.origin)return;
 
-  // Online altijd eerst de nieuwste versie ophalen. Offline valt de PWA terug op de cache.
   event.respondWith((async()=>{
     try{
       const response=await fetch(request,{cache:'no-store'});
