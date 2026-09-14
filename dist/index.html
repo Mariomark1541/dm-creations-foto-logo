@@ -7,7 +7,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="DM-Creations">
-  <meta name="description" content="Voorzie foto's lokaal van het DM-Creations-logo.">
+  <meta name="description" content="Voorzie foto's lokaal van het DM-Creations-logo en bereid Facebook-plaatsingen voor.">
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./assets/icons/icon-180.png">
   <link rel="icon" type="image/png" href="./assets/icons/icon-192.png">
@@ -15,97 +15,165 @@
   <link rel="stylesheet" href="./groups.css">
   <title>DM-Creations Foto Logo</title>
 </head>
-<body>
+<body data-active-tab="edit">
   <header class="topbar">
     <img src="./assets/dm-creations-logo.png" alt="DM-Creations" class="brand-logo">
-    <div><h1>DM-Creations</h1><p>Foto’s voorzien van DM-Creations-logo</p></div>
+    <div><h1>DM-Creations</h1><p>Foto’s netjes maken en eenvoudig delen</p></div>
   </header>
 
   <main>
-    <section class="panel picker-panel" aria-labelledby="choose-title">
-      <div class="step"><span>1</span><div><h2 id="choose-title">Foto’s kiezen</h2><p>Je originele foto’s blijven ongewijzigd op je apparaat.</p></div></div>
-      <label class="primary-button" for="photo-input">Kies één of meerdere foto’s</label>
-      <input id="photo-input" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif" multiple>
-      <p class="privacy"><span aria-hidden="true">●</span> Volledig lokaal verwerkt, niets wordt geüpload</p>
-    </section>
+    <div id="tab-edit" class="tab-page is-active" role="tabpanel" aria-labelledby="tab-edit-button">
+      <section class="panel picker-panel" aria-labelledby="choose-title">
+        <div class="step"><span>1</span><div><h2 id="choose-title">Foto’s kiezen</h2><p>Je originele foto’s blijven ongewijzigd op je apparaat.</p></div></div>
+        <label class="primary-button" for="photo-input">Kies één of meerdere foto’s</label>
+        <input id="photo-input" type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif" multiple>
+        <p class="privacy"><span aria-hidden="true">●</span> Volledig lokaal verwerkt, niets wordt geüpload</p>
+      </section>
 
-    <section class="panel settings" aria-labelledby="settings-title">
-      <div class="step"><span>2</span><div><h2 id="settings-title">Watermark instellen</h2><p>Je keuzes worden op dit apparaat onthouden.</p></div></div>
-      <div class="range-grid">
-        <label>Grootte <output id="size-output">18%</output><input id="size" type="range" min="5" max="35" value="18"></label>
-        <label>Dekking <output id="opacity-output">95%</output><input id="opacity" type="range" min="10" max="100" value="95"></label>
-        <label>Marge <output id="margin-output">3%</output><input id="margin" type="range" min="0" max="12" value="3"></label>
-      </div>
-      <fieldset><legend>Positie</legend><div class="positions" id="positions">
-        <label><input type="radio" name="position" value="top-left"><span>↖<small>Linksboven</small></span></label>
-        <label><input type="radio" name="position" value="top-right"><span>↗<small>Rechtsboven</small></span></label>
-        <label><input type="radio" name="position" value="center"><span>●<small>Midden</small></span></label>
-        <label><input type="radio" name="position" value="bottom-left"><span>↙<small>Linksonder</small></span></label>
-        <label><input type="radio" name="position" value="bottom-right" checked><span>↘<small>Rechtsonder</small></span></label>
-      </div></fieldset>
-    </section>
+      <section class="panel settings" aria-labelledby="settings-title">
+        <div class="step"><span>2</span><div><h2 id="settings-title">Watermark instellen</h2><p>Je keuzes worden op dit apparaat onthouden.</p></div></div>
+        <div class="range-grid">
+          <label>Grootte <output id="size-output">18%</output><input id="size" type="range" min="5" max="35" value="18"></label>
+          <label>Dekking <output id="opacity-output">95%</output><input id="opacity" type="range" min="10" max="100" value="95"></label>
+          <label>Marge <output id="margin-output">3%</output><input id="margin" type="range" min="0" max="12" value="3"></label>
+        </div>
+        <fieldset><legend>Positie</legend><div class="positions" id="positions">
+          <label><input type="radio" name="position" value="top-left"><span>↖<small>Linksboven</small></span></label>
+          <label><input type="radio" name="position" value="top-right"><span>↗<small>Rechtsboven</small></span></label>
+          <label><input type="radio" name="position" value="center"><span>●<small>Midden</small></span></label>
+          <label><input type="radio" name="position" value="bottom-left"><span>↙<small>Linksonder</small></span></label>
+          <label><input type="radio" name="position" value="bottom-right" checked><span>↘<small>Rechtsonder</small></span></label>
+        </div></fieldset>
+      </section>
 
-    <section class="panel previews" aria-labelledby="preview-title">
-      <div class="step"><span>3</span><div><h2 id="preview-title">Voorbeelden</h2><p id="preview-help">Kies foto’s om het resultaat vooraf te bekijken.</p></div></div>
-      <div id="empty-state" class="empty-state"><div class="photo-glyph">▧</div><strong>Nog geen foto’s gekozen</strong><span>JPEG, PNG, WebP en waar ondersteund HEIC</span></div>
-      <div id="preview-list" class="preview-list" aria-live="polite"></div>
-    </section>
+      <section class="panel price-settings" aria-labelledby="price-title">
+        <div class="price-heading">
+          <div class="step compact-step"><span>€</span><div><h2 id="price-title">Prijskaartje</h2><p>Optioneel. Staat standaard uit.</p></div></div>
+          <label class="switch"><input id="price-enabled" type="checkbox"><span></span></label>
+        </div>
+        <div id="price-options" hidden>
+          <label class="field-label" for="price-value">Prijs</label>
+          <div class="price-input-wrap"><span>€</span><input id="price-value" inputmode="decimal" autocomplete="off" value="4,50" aria-label="Prijs"></div>
 
-    <section class="panel facebook-groups" aria-labelledby="groups-title">
-      <div class="step"><span>4</span><div><h2 id="groups-title">Facebook-groepen</h2><p>Sla je vaste groepen één keer op en werk ze daarna snel af.</p></div></div>
+          <fieldset><legend>Stijl</legend><div class="price-styles" id="price-styles">
+            <label><input type="radio" name="price-style" value="price"><span><b>€ 4,50</b><small>Alleen prijs</small></span></label>
+            <label><input type="radio" name="price-style" value="available"><span><b>♥ BESCHIKBAAR</b><small>Met prijs</small></span></label>
+            <label class="brand-style"><input type="radio" name="price-style" value="brand" checked><span><img src="./assets/dm-creations-logo.png" alt=""><b>DM-Creations</b><small>Logo + prijs</small></span></label>
+          </div></fieldset>
 
-      <div class="facebook-setup">
-        <a id="open-facebook-groups" class="facebook-button facebook-overview" href="https://www.facebook.com/groups/" target="_blank" rel="noopener">ⓕ Mijn Facebook-groepen openen</a>
-        <p>Open een groep in Facebook, kies <strong>Delen → Link kopiëren</strong> en ga terug naar deze app. Met de knop hieronder voeg je die link meteen toe.</p>
-        <button id="paste-group" class="secondary-button paste-group" type="button">📋 Gekopieerde groepslink toevoegen</button>
-        <div id="paste-status" class="import-status" aria-live="polite"></div>
-      </div>
+          <div class="price-grid">
+            <fieldset><legend>Positie</legend><div class="mini-positions" id="price-positions">
+              <label><input type="radio" name="price-position" value="top-left"><span>↖</span></label>
+              <label><input type="radio" name="price-position" value="top-right"><span>↗</span></label>
+              <label><input type="radio" name="price-position" value="bottom-left" checked><span>↙</span></label>
+              <label><input type="radio" name="price-position" value="bottom-right"><span>↘</span></label>
+            </div></fieldset>
+            <label class="field-label size-field" for="price-size">Grootte
+              <select id="price-size"><option value="small">Klein</option><option value="normal" selected>Normaal</option><option value="large">Groot</option></select>
+            </label>
+          </div>
+          <p class="settings-note">Als prijskaartje en watermark dezelfde hoek gebruiken, schuift het prijskaartje automatisch omhoog zodat ze niet over elkaar vallen.</p>
+        </div>
+      </section>
 
-      <label class="field-label" for="post-text">Berichttekst</label>
-      <textarea id="post-text" rows="4" placeholder="Bijvoorbeeld: Nieuwe handgemaakte 3D-kaart van DM-Creations ✨"></textarea>
-      <div class="group-tools">
-        <button id="copy-post-text" class="secondary-button" type="button">Kopieer tekst</button>
-        <button id="reset-groups" class="secondary-button" type="button">Alles opnieuw</button>
-      </div>
+      <section class="panel previews" aria-labelledby="preview-title">
+        <div class="step"><span>3</span><div><h2 id="preview-title">Voorbeelden</h2><p id="preview-help">Kies foto’s om het resultaat vooraf te bekijken.</p></div></div>
+        <div id="empty-state" class="empty-state"><div class="photo-glyph">▧</div><strong>Nog geen foto’s gekozen</strong><span>JPEG, PNG, WebP en waar ondersteund HEIC</span></div>
+        <div id="preview-list" class="preview-list" aria-live="polite"></div>
+      </section>
+    </div>
 
-      <details class="quick-import">
-        <summary>Meerdere groepen snel toevoegen</summary>
-        <p>Plak één Facebook-groepslink per regel. Je mag ook <strong>Groepsnaam | link</strong> gebruiken.</p>
-        <textarea id="group-import" rows="5" placeholder="https://www.facebook.com/groups/123456789/&#10;Kaartenhoekje | https://www.facebook.com/groups/kaartenhoekje/"></textarea>
-        <button id="import-groups" class="facebook-button import-button" type="button">Links importeren</button>
-        <div id="group-import-status" class="import-status" aria-live="polite"></div>
-      </details>
+    <div id="tab-facebook" class="tab-page" role="tabpanel" aria-labelledby="tab-facebook-button" hidden>
+      <section class="panel facebook-workspace" aria-labelledby="facebook-title">
+        <div class="step"><span>f</span><div><h2 id="facebook-title">Facebook</h2><p>Bereid je bericht voor en werk je vaste hobbygroepen af.</p></div></div>
 
-      <form id="group-form" class="group-form">
-        <input id="group-name" type="text" placeholder="Naam (optioneel, wordt zo mogelijk automatisch ingevuld)">
-        <input id="group-url" type="url" placeholder="https://www.facebook.com/groups/..." required>
-        <button class="facebook-button" type="submit">Groep toevoegen</button>
-      </form>
-      <div class="group-progress"><strong id="group-progress-text">0 van 0 geplaatst</strong><div><span id="group-progress-bar"></span></div></div>
-      <div id="group-empty" class="group-empty">Nog geen Facebook-groepen opgeslagen.</div>
-      <div id="group-list" class="group-list"></div>
-      <p class="groups-note">Meta laat externe apps niet automatisch in Facebook-groepen plaatsen. Deze lijst opent elke groep direct en houdt bij waar je al hebt geplaatst.</p>
-    </section>
+        <div class="facebook-photo-card">
+          <div><strong>Foto’s uit Bewerken</strong><small id="facebook-photo-status">Nog geen foto’s gekozen.</small></div>
+          <button id="facebook-share-photos" class="secondary-button" type="button" disabled>Deel/Bewaar foto</button>
+        </div>
+
+        <label class="field-label" for="post-text">Advertentietekst</label>
+        <textarea id="post-text" rows="5" placeholder="Bijvoorbeeld: Nieuwe handgemaakte kaart van DM-Creations ✨"></textarea>
+        <div class="group-tools">
+          <button id="copy-post-text" class="secondary-button" type="button">Kopieer tekst</button>
+          <button id="reset-groups" class="secondary-button" type="button">Plaatsstatus resetten</button>
+        </div>
+      </section>
+
+      <section class="panel facebook-groups" aria-labelledby="groups-title">
+        <div class="step"><span>1</span><div><h2 id="groups-title">Favoriete groepen</h2><p>Voeg je vaste groepen één keer toe en selecteer ze voor een plaatsronde.</p></div></div>
+
+        <div class="facebook-setup">
+          <a id="open-facebook-groups" class="facebook-button facebook-overview" href="https://www.facebook.com/groups/" target="_blank" rel="noopener">ⓕ Mijn Facebook-groepen openen</a>
+          <p>Open een groep in Facebook, kies <strong>Delen → Link kopiëren</strong> en voeg hem hieronder toe.</p>
+          <button id="paste-group" class="secondary-button paste-group" type="button">📋 Gekopieerde groepslink toevoegen</button>
+          <div id="paste-status" class="import-status" aria-live="polite"></div>
+        </div>
+
+        <details class="quick-import">
+          <summary>Meerdere groepen snel toevoegen</summary>
+          <p>Plak één Facebook-groepslink per regel. Je mag ook <strong>Groepsnaam | link</strong> gebruiken.</p>
+          <textarea id="group-import" rows="5" placeholder="https://www.facebook.com/groups/123456789/&#10;Kaartenhoekje | https://www.facebook.com/groups/kaartenhoekje/"></textarea>
+          <button id="import-groups" class="facebook-button import-button" type="button">Links importeren</button>
+          <div id="group-import-status" class="import-status" aria-live="polite"></div>
+        </details>
+
+        <form id="group-form" class="group-form">
+          <input id="group-name" type="text" placeholder="Naam van de groep (optioneel)">
+          <input id="group-url" type="url" placeholder="https://www.facebook.com/groups/..." required>
+          <button class="facebook-button" type="submit">+ Groep toevoegen</button>
+        </form>
+
+        <div class="group-progress"><strong id="group-progress-text">0 van 0 geplaatst</strong><div><span id="group-progress-bar"></span></div></div>
+        <div id="group-empty" class="group-empty">Nog geen Facebook-groepen opgeslagen.</div>
+        <div id="group-list" class="group-list"></div>
+        <p class="groups-note">Meta laat externe apps niet automatisch in groepen plaatsen. DM-Creations opent de juiste groep en bewaart lokaal je voortgang.</p>
+      </section>
+
+      <section class="panel posting-round" aria-labelledby="round-title">
+        <div class="step"><span>2</span><div><h2 id="round-title">Plaatsronde</h2><p>Selecteer hierboven één of meer groepen en werk ze achter elkaar af.</p></div></div>
+        <button id="start-round" class="primary-button" type="button">Start plaatsronde</button>
+        <div id="round-card" class="round-card" hidden>
+          <div class="round-topline"><strong id="round-progress">Groep 1 van 1</strong><span id="round-state">Bezig</span></div>
+          <h3 id="round-group-name">Facebook-groep</h3>
+          <small id="round-last-placed"></small>
+          <div class="round-actions">
+            <button id="round-copy" class="secondary-button" type="button">Kopieer tekst</button>
+            <button id="round-share" class="secondary-button" type="button">Deel/Bewaar foto</button>
+            <button id="round-open" class="facebook-button" type="button">Open Facebook-groep</button>
+          </div>
+          <div class="round-finish-actions">
+            <button id="round-done" class="primary-button" type="button">✓ Geplaatst</button>
+            <button id="round-skip" class="secondary-button" type="button">Overslaan</button>
+            <button id="round-next" class="secondary-button" type="button">Volgende groep</button>
+          </div>
+        </div>
+      </section>
+    </div>
   </main>
 
-  <div class="action-dock">
+  <div id="edit-actions" class="action-dock">
     <div id="status" role="status" aria-live="polite"></div>
     <div class="action-row">
       <button id="process-all" class="primary-button" disabled>Alles verwerken</button>
-      <button id="facebook-all" class="facebook-button" disabled>Facebook</button>
       <button id="share-all" class="secondary-button" disabled>Delen</button>
       <button id="save-all" class="secondary-button" disabled>Bewaar in Foto’s</button>
     </div>
   </div>
 
+  <nav class="tabbar" aria-label="Hoofdnavigatie">
+    <button id="tab-edit-button" class="tab-button is-active" type="button" data-tab="edit" aria-selected="true"><span>🖼️</span>Bewerken</button>
+    <button id="tab-facebook-button" class="tab-button" type="button" data-tab="facebook" aria-selected="false"><span>📣</span>Facebook</button>
+  </nav>
+
   <template id="preview-template"><article class="preview-card">
     <div class="preview-frame"><canvas></canvas><div class="loading">Voorbeeld maken…</div></div>
     <div class="file-info"><div><strong class="file-name"></strong><span class="file-meta"></span></div><button class="remove" aria-label="Foto verwijderen">×</button></div>
     <p class="item-error" hidden></p>
-    <div class="item-actions" hidden><button class="facebook-one facebook-button">Facebook</button><button class="share-one secondary-button">Delen</button><button class="save-one secondary-button">Bewaar in Foto’s</button></div>
+    <div class="item-actions" hidden><button class="share-one secondary-button">Delen</button><button class="save-one secondary-button">Bewaar in Foto’s</button></div>
   </article></template>
 
-  <script src="./groups.js" defer></script>
   <script src="./app.js" defer></script>
+  <script src="./groups.js" defer></script>
 </body>
 </html>
